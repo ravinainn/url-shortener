@@ -21,7 +21,7 @@ connectToMongoDb(mongoDbURI)
   });
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT;
 
 // to telling the server that we are using ejs as view engine
 app.set("view engine", "ejs");
