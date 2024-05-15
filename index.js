@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-
+require("dotenv").config();
 const { connectToMongoDb } = require("./connection");
 const URL = require("./models/url");
 const cookieParser = require("cookie-parser");
@@ -10,10 +10,9 @@ const urlRoute = require("./routes/url");
 const staticRoute = require("./routes/staticRouter");
 const userRoute = require("./routes/user");
 const { checkForAuthentication, restrictTo } = require("./middleware/auth");
+const mongoDbURI = process.env.MONGODB_URI;
 
-connectToMongoDb(
-  "mongodb+srv://ravinain:nainravi5559@cluster0.cri0q86.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-)
+connectToMongoDb(mongoDbURI)
   .then(() => {
     console.log("Connected to Db");
   })
