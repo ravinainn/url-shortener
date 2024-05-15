@@ -11,7 +11,9 @@ const staticRoute = require("./routes/staticRouter");
 const userRoute = require("./routes/user");
 const { checkForAuthentication, restrictTo } = require("./middleware/auth");
 
-connectToMongoDb("mongodb://localhost:27017/url-shortener")
+connectToMongoDb(
+  "mongodb+srv://ravinain:nainravi5559@cluster0.cri0q86.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+)
   .then(() => {
     console.log("Connected to Db");
   })
