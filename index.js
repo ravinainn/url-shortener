@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3000;
 // app.set("views", path.resolve("./views"));
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "*"],
+  origin: "http://localhost:5174",
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
