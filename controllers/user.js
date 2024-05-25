@@ -4,27 +4,32 @@ const { setUser } = require("../service/auth");
 
 async function handleUserSignUp(req, res) {
   const { name, email, password } = req.body;
-  await User.create({
-    name,
-    email,
-    password,
-  });
+  try {
+    await User.create({
+      name,
+      email,
+      password,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
   return res.render("home");
 }
+
 async function handleUserLogin(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({
     email,
     password,
   });
+
   if (!user) {
-    return res.render("login", { error: "Invalid UserName or Password" });
+    return res.json({ status: "error", user: false });
   }
 
   const token = setUser(user);
-  res.cookie("token", token);
-  return res.redirect("/");
-  // return res.json({ token });
+  return res.json({ status: "ok", token });
 }
 
 module.exports = {

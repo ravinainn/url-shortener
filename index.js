@@ -1,46 +1,39 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 require("dotenv").config();
-const { connectToMongoDb } = require("./connection");
+const { connectDB } = require("./connection");
 const URL = require("./models/url");
-const cookieParser = require("cookie-parser");
 
-// Routers
 const urlRoute = require("./routes/url");
 const staticRoute = require("./routes/staticRouter");
 const userRoute = require("./routes/user");
 const { checkForAuthentication, restrictTo } = require("./middleware/auth");
-const mongoDbURI = process.env.MONGODB_URI;
 
-connectToMongoDb(mongoDbURI)
-  .then(() => {
-    console.log("Connected to Db");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+connectDB(process.env.MONGODB_URI);
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 // to telling the server that we are using ejs as view engine
-app.set("view engine", "ejs");
-app.set("views", path.resolve("./views"));
+// app.set("view engine", "ejs");
+// app.set("views", path.resolve("./views"));
+
+const corsOptions = {
+  origin: ["http://localhost:5173", "*"],
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
 
 app.use(express.json());
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(checkForAuthentication);
+// app.use(cookieParser());
+// app.use(checkForAuthentication);
 
-app.get("/test", async (req, res) => {
-  const allUrls = await URL.find();
-  return res.render("home", {
-    urls: allUrls,
-  });
-});
-
-app.use("/url", restrictTo(["NORMAL"]), urlRoute); //Here we use a inline middleware. restrictToLoggedinUserOnly will execute only if we get a request for /url.
-app.use("/", staticRoute);
+app.use("/url", urlRoute);
+// app.use("/url", restrictTo(["NORMAL"]), urlRoute); //Here we use a inline middleware. restrictToLoggedinUserOnly will execute only if we get a request for /url.
+// app.use("/", staticRoute);
 app.use("/user", userRoute);
 
 app.get("/url/:shortId", async (req, res) => {
@@ -54,7 +47,11 @@ app.get("/url/:shortId", async (req, res) => {
   if (!entry) {
     return res.status(404).json({ msg: "url not found" });
   }
-  res.redirect(entry.redirectURL);
+  const redirectURL = entry.redirectURL.startsWith("http")
+    ? entry.redirectURL
+    : `http://${entry.redirectURL}`;
+
+  return res.redirect(redirectURL);
 });
 
 app.listen(PORT, () => {
