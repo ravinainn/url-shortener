@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3000;
 // app.set("views", path.resolve("./views"));
 
 const corsOptions = {
-  origin: "https://ravi-url-shortener.vercel.app/",
+  origin: "https://ravi-url-shortener.vercel.app",
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
