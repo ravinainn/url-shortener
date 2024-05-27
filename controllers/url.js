@@ -3,7 +3,7 @@ const URL = require("../models/url");
 
 const handleGetShortURL = async (req, res) => {
   try {
-    const urls = await URL.find().sort({ timestamp: "desc" });
+    const urls = await URL.find().sort({ timestamp: "ascending" });
     res.json(urls);
   } catch (error) {
     console.error("Error retrieving URLs:", error);
